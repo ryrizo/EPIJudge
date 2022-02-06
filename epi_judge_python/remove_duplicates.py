@@ -16,8 +16,16 @@ class Name:
 
 
 def eliminate_duplicate(A: List[Name]) -> None:
-    # TODO - you fill in here.
-    return
+    A.sort()
+    previous = A[0]
+    write_index = 1
+    for candidate in A[1:]:
+        if candidate.first_name != previous.first_name:
+            A[write_index] = candidate
+            write_index += 1 # This one can stay
+            previous = candidate
+    del A[write_index:]
+
 
 
 @enable_executor_hook

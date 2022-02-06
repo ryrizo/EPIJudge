@@ -4,7 +4,18 @@ from test_framework import generic_test
 
 
 def search_smallest(A: List[int]) -> int:
-    # TODO - you fill in here.
+    left, right = 0, len(A) - 1
+
+    while left <= right:
+        m = (right - left) // 2 + left
+        if A[m - 1] > A[m]:
+            return m # Found the drop point
+        elif (m + 1 < len(A) and A[m+1] < A[m]):
+            return m + 1 # Dop point could be on either side of m
+        if A[left] <= A[m]: # Drop point is right 
+            left = m + 1
+        else: # Drop point is left
+            right = m - 1
     return 0
 
 

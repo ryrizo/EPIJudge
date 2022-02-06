@@ -1,5 +1,7 @@
 import functools
 import math
+import heapq
+import itertools
 from typing import Iterator, List
 
 from test_framework import generic_test
@@ -28,8 +30,31 @@ class Star:
 
 
 def find_closest_k_stars(stars: Iterator[Star], k: int) -> List[Star]:
-    # TODO - you fill in here.
-    return []
+    # Approach 1: Add all of the star to a min heap and pop 10 - Crazy number of stars though
+    # Approach 2: Use a max heap, to store smallest seen values - remove max if something smaller seen
+    # Time Complexity: Iterate all of the stars, N, inserting at worse N stars into a heap with max k items
+    # O(n*log(k)) - which is much better than n*log(n) with a min heap
+    # Simplification available is to push each time and pop each time its bigger than k. 
+    
+    # Heap representation (-1*distance, star)
+    heap = [] # To make this a max heap, I need to give it a negative distance key
+    result = []
+    # Add first K 
+    for star in itertools.islice(stars, k):
+        heapq.heappush(heap, (-1 * star.distance, star)) 
+
+    # Iterate remaining stars
+    for candidate_star in stars:
+        # If distance is less than max heap element, push this star and remove old star
+        candidate_distance = candidate_star.distance
+        if heap[0][1].distance >= candidate_distance:
+            # The furthest seen close star is further than this one - remove max and add this smaller one
+            heapq.heappushpop(heap, (-1 * candidate_distance, candidate_star))
+
+    # Drain the heap for result
+    while len(heap) > 0:
+        result.append(heapq.heappop(heap)[1])
+    return result
 
 
 def comp(expected_output, output):

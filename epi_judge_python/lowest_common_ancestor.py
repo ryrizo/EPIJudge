@@ -6,12 +6,32 @@ from test_framework import generic_test
 from test_framework.binary_tree_utils import must_find_node, strip_parent_link
 from test_framework.test_failure import TestFailure
 from test_framework.test_utils import enable_executor_hook
+from collections import namedtuple
+
+CountWithLCA = namedtuple('CountWithLCA', ('counts', 'lca'))
+
 
 
 def lca(tree: BinaryTreeNode, node0: BinaryTreeNode,
         node1: BinaryTreeNode) -> Optional[BinaryTreeNode]:
-    # TODO - you fill in here.
-    return None
+        return lca_helper(tree, node0, node1).lca or tree
+
+def lca_helper(node, node0, node1) -> CountWithLCA:
+    if node is None:
+        return CountWithLCA(counts=0, lca=None)
+
+    left_count = lca_helper(node.left, node0, node1)
+    if left_count.counts == 2:
+        return left_count
+    right_count = lca_helper(node.right, node0, node1)
+    if right_count.counts == 2:
+        return right_count
+
+    num_here = (node0, node1).count(node)
+    counts_here = right_count.counts + left_count.counts + num_here
+    lca_found = node if counts_here == 2 else None 
+    return CountWithLCA(counts=counts_here, lca=lca_found)
+
 
 
 @enable_executor_hook

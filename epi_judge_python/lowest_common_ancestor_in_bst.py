@@ -10,8 +10,23 @@ from test_framework.test_utils import enable_executor_hook
 
 # Input nodes are nonempty and the key at s is less than or equal to that at b.
 def find_lca(tree: BstNode, s: BstNode, b: BstNode) -> Optional[BstNode]:
-    # TODO - you fill in here.
-    return None
+    '''Approach: Straddle check, go left or right
+    '''
+    if tree is None:
+        return None
+
+    if s.data == tree.data or b.data == tree.data or \
+        s.data < tree.data < b.data:
+        return tree 
+
+    if s.data > tree.data < b.data: # Both larger - check right
+        better_choice = find_lca(tree.right, s, b)
+        return better_choice or tree # I'm an ancestor
+    if s.data < tree.data > b.data: # Both smaller -check right
+        better_choice = find_lca(tree.left, s, b)
+        return better_choice or tree 
+
+    return None 
 
 
 @enable_executor_hook
